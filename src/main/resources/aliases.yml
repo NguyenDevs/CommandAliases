@@ -1,0 +1,220 @@
+# ============================================================================
+#  CommandAliases - Alias Definitions
+# ============================================================================
+# Each alias is an entry under the `aliases:` section with a unique key
+# (numeric or arbitrary name).
+#
+# --- Required fields ---
+#   command:  The custom command name (and optional arguments).
+#             Examples:
+#               command: heal           -> /heal (no arguments)
+#               command: "apple <player>"  -> /apple with one argument
+#               command: "giveitem <player> <amount>"  -> /giveitem with two args
+#
+#   execute:  The real command to dispatch when the alias is used.
+#
+# --- Placeholders (supported in `execute`) ---
+#   %executer%            Replaced with the name of the player who ran the alias.
+#
+#   %<argname>%           Replaced with the value the player typed for the
+#                         corresponding <argname> declared in `command`.
+#                         E.g. command: "apple <player>" + execute: "give %player% apple 1"
+#                         -> /apple Steve  dispatches  give Steve apple 1
+#
+#   PluginName:command    (no placeholder, but a special syntax)
+#                         When multiple plugins register the same command name,
+#                         prefix with the plugin name and a colon to target a
+#                         specific plugin's command.
+#                         E.g. execute: "Essentials:heal"
+#
+# --- Optional fields ---
+#   permission:           Permission node required to use this alias.
+#                         If omitted, anyone can use the alias.
+#
+#   permission-default:   Default access level for the permission node.
+#                         Values: true, false, op (default: op)
+#                         Only relevant when `permission` is set.
+#
+#   permission-message:   Custom message shown when the sender lacks permission.
+#                         Supports & color codes.
+#                         Falls back to the plugin-wide default if omitted.
+# ============================================================================
+
+aliases:
+
+  # =======================
+  #  BASIC — simple /command -> /execute
+  # =======================
+
+  # /hub -> /warp hub
+  hub:
+    command: hub
+    execute: "warp hub"
+
+  # /discord -> /msg <player> Join our Discord: discord.gg/example
+  discord:
+    command: discord
+    execute: "msg %executer% &bJoin our Discord: &fdiscord.gg/example"
+
+  # /rules -> /text <player> rules.txt
+  rules:
+    command: rules
+    execute: "text %executer% rules.txt"
+
+  # /donate -> /website donate.example.com
+  donate:
+    command: donate
+    execute: "website donate.example.com"
+
+  # /list -> /playerlist
+  list:
+    command: list
+    execute: "playerlist"
+
+  # =======================
+  #  WITH ARGUMENTS
+  # =======================
+
+  # /clearinv <player> -> /clear <player>
+  clearinv:
+    command: "clearinv <player>"
+    execute: "clear %player%"
+
+  # /mute <player> -> /tempmute <player> 30m
+  mute:
+    command: "mute <player>"
+    execute: "tempmute %player% 30m"
+
+  # /warn <player> -> /msg <player> &cYou received a warning from staff.
+  warn:
+    command: "warn <player>"
+    execute: "msg %player% &cYou have been warned by a staff member."
+
+  # /speed <player> <amount> -> /flyspeed <player> <amount>
+  speed:
+    command: "speed <player> <amount>"
+    execute: "flyspeed %player% %amount%"
+
+  # /trade <player> <amount> -> /eco give <player> <amount>
+  trade:
+    command: "trade <player> <amount>"
+    execute: "eco give %player% %amount%"
+
+  # =======================
+  #  WITH PERMISSION
+  # =======================
+
+  # /fly — permission-protected toggle
+  fly:
+    command: fly
+    execute: "fly"
+    permission: commandaliases.fly
+    permission-default: false
+    permission-message: "&cYou don't have permission to fly."
+
+  # /fly <player> — make another player fly
+  fly-other:
+    command: "fly <player>"
+    execute: "fly %player%"
+    permission: commandaliases.fly.others
+    permission-default: op
+    permission-message: "&cOnly staff can toggle flight for others."
+
+  # /tp <player> — teleport to another player
+  tp:
+    command: "tp <player>"
+    execute: "tpa %player%"
+    permission: commandaliases.tp
+    permission-default: op
+
+  # /broadcast <message> — staff broadcast
+  broadcast:
+    command: "broadcast <message>"
+    execute: "say &6[&eBroadcast&6] &f%message%"
+    permission: commandaliases.broadcast
+    permission-default: op
+    permission-message: "&4Only administrators can broadcast."
+
+  # /kick <player> <reason> — staff kick with reason
+  kick:
+    command: "kick <player> <reason>"
+    execute: "kick %player% %reason%"
+    permission: commandaliases.kick
+    permission-default: op
+    permission-message: "&cYou are not allowed to kick players."
+
+  # /vanish — toggle vanish (staff only)
+  vanish:
+    command: vanish
+    execute: "vanish"
+    permission: commandaliases.vanish
+    permission-default: op
+
+  # =======================
+  #  PLUGIN-QUALIFIED DISPATCH
+  # =======================
+
+  # /heal — force Essentials' /heal when multiple plugins register it
+  heal:
+    command: heal
+    execute: "Essentials:heal"
+    permission: commandaliases.heal
+    permission-default: op
+    permission-message: "&cYou cannot heal yourself."
+
+  # /heal <player> — heal another player via Essentials
+  heal-other:
+    command: "heal <player>"
+    execute: "Essentials:heal %player%"
+    permission: commandaliases.heal.others
+    permission-default: op
+    permission-message: "&cOnly admins can heal others."
+
+  # /god — target CMI's god mode when Essentials also registers /god
+  god:
+    command: god
+    execute: "CMI:god"
+    permission: commandaliases.god
+    permission-default: op
+
+  # /tphere <player> — teleport target to executor via Essentials
+  tphere:
+    command: "tphere <player>"
+    execute: "Essentials:tp %player% %executer%"
+    permission: commandaliases.tphere
+    permission-default: op
+
+  # =======================
+  #  DONATOR / SPECIAL
+  # =======================
+
+  # /nick <nick> — change nickname (donator perk)
+  nick:
+    command: "nick <nick>"
+    execute: "nick %executer% %nick%"
+    permission: commandaliases.nick
+    permission-default: false
+    permission-message: "&6This is a donator-only feature. &eBuy ranks at &fstore.example.com"
+
+  # /color <color> — set chat color (donator perk)
+  color:
+    command: "color <color>"
+    execute: "chatcolor %executer% %color%"
+    permission: commandaliases.color
+    permission-default: false
+    permission-message: "&6Donators can change their chat color. &ePurchase at &fstore.example.com"
+
+  # /hat — wear an item on your head
+  hat:
+    command: hat
+    execute: "hat"
+    permission: commandaliases.hat
+    permission-default: false
+    permission-message: "&6This is a donator feature."
+
+  # /firework — launch a firework at your location
+  firework:
+    command: firework
+    execute: "firework %executer%"
+    permission: commandaliases.firework
+    permission-default: op

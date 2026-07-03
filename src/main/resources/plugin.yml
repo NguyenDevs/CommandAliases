@@ -1,0 +1,17 @@
+name: CommandAliases
+version: '${version}'
+
+main: org.nguyendevs.commandAliases.CommandAliases
+api-version: '1.21'
+
+commands:
+  commandaliases:
+    description: Admin command for CommandAliases
+    usage: /<command> reload
+    permission: commandaliases.admin
+    aliases: [cal]
+
+permissions:
+  commandaliases.admin:
+    description: Allows reloading CommandAliases
+    default: op
