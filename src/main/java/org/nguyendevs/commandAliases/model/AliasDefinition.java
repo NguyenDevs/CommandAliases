@@ -15,5 +15,7 @@ public record AliasDefinition(
     double soundPitch,
     double soundVolume,
     int cooldown,
-    String cooldownMessage
+    String cooldownMessage,
+    int loop,
+    double loopDelay
 ) {}
