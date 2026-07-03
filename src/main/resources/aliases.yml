@@ -16,10 +16,12 @@
 # --- Placeholders (supported in `execute`) ---
 #   %executer%            Replaced with the name of the player who ran the alias.
 #
-#   %<argname>%           Replaced with the value the player typed for the
-#                         corresponding <argname> declared in `command`.
-#                         E.g. command: "apple <player>" + execute: "give %player% apple 1"
-#                         -> /apple Steve  dispatches  give Steve apple 1
+#   %<argname>%           Custom placeholder — name it anything you want.
+#                         Declare <name> in command, use %name% in execute.
+#                         Example: command: "giveitem <player> <amount>"
+#                                  execute: "give %player% apple %amount%"
+#                                  -> /giveitem Steve 5 runs  give Steve apple 5
+#                         Works with any name: <reason> → %reason%, <item> → %item%, etc.
 #
 #   PluginName:command    (no placeholder, but a special syntax)
 #                         When multiple plugins register the same command name,
