@@ -4,11 +4,12 @@ settings:
   debug: false
 
 messages:
+  prefix: "&8[&bCAL&8]"
   no-permission: "&cYou do not have permission to use this command."
   invalid-arguments: "&cMissing arguments. Usage: &e%command%"
   command-not-found: "&cNo target command found for this alias. Please contact an admin."
   plugin-not-found: "&cPlugin &e%plugin% &cdoes not exist or is not loaded."
-  reload-success: "&aCommandAliases reloaded successfully. (%count% aliases loaded)"
+  reload-success: "&aReloaded successfully. (%count% aliases loaded)"
   reload-failed: "&cReload failed, check console for details."
 
 permissions:
