@@ -55,6 +55,7 @@ public class CommandAliases extends JavaPlugin {
         var adminCommand = getCommand("commandaliases");
         if (adminCommand != null) {
             adminCommand.setExecutor(adminExecutor);
+            adminCommand.setTabCompleter(adminExecutor);
         }
 
         loadAliases();
