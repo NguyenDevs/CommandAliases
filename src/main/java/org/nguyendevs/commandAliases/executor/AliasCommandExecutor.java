@@ -11,6 +11,8 @@ import org.nguyendevs.commandAliases.model.AliasDefinition;
 import org.nguyendevs.commandAliases.placeholder.PlaceholderResolver;
 import org.nguyendevs.commandAliases.util.SoundUtil;
 
+import org.bukkit.entity.Player;
+
 import java.util.HashMap;
 
 public class AliasCommandExecutor implements CommandExecutor {
@@ -31,6 +33,20 @@ public class AliasCommandExecutor implements CommandExecutor {
         if (def == null) return false;
 
         if (!checkPermission(sender, def)) return true;
+
+        if (def.cooldown() > 0 && sender instanceof Player player) {
+            if (plugin.getCooldownManager().hasCooldown(player, def.commandName())) {
+                var remaining = plugin.getCooldownManager().getRemainingSeconds(player, def.commandName());
+                var msg = def.cooldownMessage();
+                if (msg == null || msg.isBlank()) {
+                    msg = "&cPlease wait &e%seconds%s &cbefore using this command again.";
+                }
+                msg = msg.replace("%seconds%", String.valueOf(remaining));
+                SoundUtil.playError(sender);
+                sender.sendMessage(CommandDispatcher.colorize(msg));
+                return true;
+            }
+        }
 
         if (args.length < def.declaredArgs().size()) {
             var usage = buildUsage(def);
@@ -54,6 +70,10 @@ public class AliasCommandExecutor implements CommandExecutor {
         }
 
         plugin.getDispatcher().dispatch(sender, resolved);
+
+        if (def.cooldown() > 0 && sender instanceof Player player) {
+            plugin.getCooldownManager().setCooldown(player, def.commandName(), def.cooldown());
+        }
 
         if (def.sound() != null) {
             SoundUtil.play(sender, def.sound(), def.soundPitch(), def.soundVolume());
