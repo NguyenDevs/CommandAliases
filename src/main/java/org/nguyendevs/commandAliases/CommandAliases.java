@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import org.nguyendevs.commandAliases.cooldown.CooldownManager;
 import org.nguyendevs.commandAliases.command.AdminCommandExecutor;
 import org.nguyendevs.commandAliases.config.AliasConfigParser;
 import org.nguyendevs.commandAliases.dispatch.CommandDispatcher;
@@ -30,6 +31,7 @@ public class CommandAliases extends JavaPlugin {
     private PermissionManager permissionManager;
     private CommandDispatcher dispatcher;
     private PlaceholderResolver placeholderResolver;
+    private CooldownManager cooldownManager;
     private AliasCommandExecutor aliasExecutor;
     private AliasTabCompleter aliasCompleter;
 
@@ -46,6 +48,7 @@ public class CommandAliases extends JavaPlugin {
         this.configParser = new AliasConfigParser(this);
         this.commandRegistrar = new CommandRegistrar(this);
         this.permissionManager = new PermissionManager();
+        this.cooldownManager = new CooldownManager();
         this.dispatcher = new CommandDispatcher(this);
         this.placeholderResolver = new PlaceholderResolver();
         this.aliasExecutor = new AliasCommandExecutor(this, placeholderResolver);
@@ -103,6 +106,7 @@ public class CommandAliases extends JavaPlugin {
     public void unloadAliases() {
         permissionManager.unregisterAll();
         commandRegistrar.unregisterAll();
+        if (cooldownManager != null) cooldownManager.clearAll();
         this.aliases = Collections.emptyMap();
     }
 
@@ -122,6 +126,10 @@ public class CommandAliases extends JavaPlugin {
 
     public CommandDispatcher getDispatcher() {
         return dispatcher;
+    }
+
+    public CooldownManager getCooldownManager() {
+        return cooldownManager;
     }
 
     public static CommandAliases getInstance() {
