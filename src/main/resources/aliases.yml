@@ -54,6 +54,13 @@
 #   cooldown-message:     Custom message shown when the alias is on cooldown.
 #                         Supports %seconds% placeholder (remaining time).
 #                         Falls back to a default message if omitted.
+#
+#   loop:                 Number of times to execute the command.
+#                         0 or 1 means execute once (default).
+#
+#   loop-delay:           Delay in seconds between each loop execution.
+#                         If omitted or 0, all executions happen instantly.
+#                         Example: loop: 5, loop-delay: 0.5 -> runs 5 times, 0.5s apart
 # ============================================================================
 
 aliases:
@@ -165,3 +172,20 @@ aliases:
     sound: ENTITY_PLAYER_LEVELUP
     sound-pitch: 1.5
     sound-volume: 1.0
+
+  # =======================
+  #  WITH LOOP
+  # =======================
+
+  # /autofish — cast fishing rod 10 times instantly
+  autofish:
+    command: autofish
+    execute: "fish cast"
+    loop: 10
+
+  # /rainbow — change color 8 times with 0.3s delay between each
+  rainbow:
+    command: "rainbow <player>"
+    execute: "color %player% &c%executer%"
+    loop: 8
+    loop-delay: 0.3
