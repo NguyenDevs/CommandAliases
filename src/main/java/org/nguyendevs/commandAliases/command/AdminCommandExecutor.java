@@ -8,6 +8,7 @@ import org.bukkit.command.TabCompleter;
 import org.nguyendevs.commandAliases.CommandAliases;
 import org.nguyendevs.commandAliases.dispatch.CommandDispatcher;
 import org.nguyendevs.commandAliases.util.ConsoleLogger;
+import org.nguyendevs.commandAliases.util.SoundUtil;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class AdminCommandExecutor implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission(ADMIN_PERMISSION)) {
+            SoundUtil.playError(sender);
             sender.sendMessage(CommandDispatcher.colorize(plugin.config().messages().noPermission()));
             return true;
         }
@@ -77,10 +79,12 @@ public class AdminCommandExecutor implements CommandExecutor, TabCompleter {
             var count = plugin.getAliases().size();
             var msg = plugin.config().messages().reloadSuccess().replace("%count%", String.valueOf(count));
             sender.sendMessage(CommandDispatcher.colorize(msg));
+            SoundUtil.playSuccess(sender);
             ConsoleLogger.info("Reloaded by " + sender.getName() + ". " + count + " aliases loaded.");
         } catch (Exception e) {
             var msg = plugin.config().messages().reloadFailed();
             sender.sendMessage(CommandDispatcher.colorize(msg));
+            SoundUtil.playError(sender);
             ConsoleLogger.error("Reload failed: " + e.getMessage());
         }
         return true;
