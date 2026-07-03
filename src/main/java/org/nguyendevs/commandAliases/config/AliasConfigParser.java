@@ -1,5 +1,6 @@
 package org.nguyendevs.commandAliases.config;
 
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +22,9 @@ public class AliasConfigParser {
     private static final String CONFIG_KEY_PERMISSION = "permission";
     private static final String CONFIG_KEY_PERMISSION_MESSAGE = "permission-message";
     private static final String CONFIG_KEY_PERMISSION_DEFAULT = "permission-default";
+    private static final String CONFIG_KEY_SOUND = "sound";
+    private static final String CONFIG_KEY_SOUND_PITCH = "sound-pitch";
+    private static final String CONFIG_KEY_SOUND_VOLUME = "sound-volume";
     private static final String ALIASES_SECTION = "aliases";
     private static final List<String> VALID_PERMISSION_DEFAULTS = List.of("true", "false", "op");
 
@@ -130,10 +134,26 @@ public class AliasConfigParser {
             permissionMessage = null;
         }
 
+        var sound = entry.getString(CONFIG_KEY_SOUND);
+        var soundPitch = entry.getDouble(CONFIG_KEY_SOUND_PITCH, 1.0);
+        var soundVolume = entry.getDouble(CONFIG_KEY_SOUND_VOLUME, 1.0);
+
+        if (sound != null && !sound.isEmpty()) {
+            try {
+                Sound.valueOf(sound.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                ConsoleLogger.warn("Alias '" + configKey + "' has invalid sound '" + sound + "'. Skipping sound.");
+                sound = null;
+            }
+        } else {
+            sound = null;
+        }
+
         return new AliasDefinition(
             configKey, command, execute, commandName,
             Collections.unmodifiableList(declaredArgs),
-            permission, permissionMessage, permissionDefault
+            permission, permissionMessage, permissionDefault,
+            sound, soundPitch, soundVolume
         );
     }
 }
