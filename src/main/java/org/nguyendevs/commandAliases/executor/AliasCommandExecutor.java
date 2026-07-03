@@ -1,5 +1,6 @@
 package org.nguyendevs.commandAliases.executor;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,8 +11,6 @@ import org.nguyendevs.commandAliases.dispatch.CommandDispatcher;
 import org.nguyendevs.commandAliases.model.AliasDefinition;
 import org.nguyendevs.commandAliases.placeholder.PlaceholderResolver;
 import org.nguyendevs.commandAliases.util.SoundUtil;
-
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
@@ -69,7 +68,24 @@ public class AliasCommandExecutor implements CommandExecutor {
             plugin.getLogger().info("[Debug] Alias '/" + label + "' resolved to: " + resolved);
         }
 
-        plugin.getDispatcher().dispatch(sender, resolved);
+        if (def.loop() > 1 && def.loopDelay() > 0) {
+            var delayTicks = (long) (def.loopDelay() * 20);
+            var task = Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
+                int count = 0;
+                @Override
+                public void run() {
+                    if (count >= def.loop()) return;
+                    plugin.getDispatcher().dispatch(sender, resolved);
+                    count++;
+                }
+            }, 0L, delayTicks);
+            Bukkit.getScheduler().runTaskLater(plugin, task::cancel, (long) def.loop() * delayTicks);
+        } else {
+            var times = Math.max(1, def.loop());
+            for (int i = 0; i < times; i++) {
+                plugin.getDispatcher().dispatch(sender, resolved);
+            }
+        }
 
         if (def.cooldown() > 0 && sender instanceof Player player) {
             plugin.getCooldownManager().setCooldown(player, def.commandName(), def.cooldown());
