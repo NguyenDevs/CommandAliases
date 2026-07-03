@@ -9,6 +9,7 @@ import org.nguyendevs.commandAliases.CommandAliases;
 import org.nguyendevs.commandAliases.dispatch.CommandDispatcher;
 import org.nguyendevs.commandAliases.model.AliasDefinition;
 import org.nguyendevs.commandAliases.placeholder.PlaceholderResolver;
+import org.nguyendevs.commandAliases.util.SoundUtil;
 
 import java.util.HashMap;
 
@@ -34,6 +35,7 @@ public class AliasCommandExecutor implements CommandExecutor {
         if (args.length < def.declaredArgs().size()) {
             var usage = buildUsage(def);
             var msg = plugin.config().messages().invalidArguments().replace("%command%", usage);
+            SoundUtil.playError(sender);
             sender.sendMessage(CommandDispatcher.colorize(msg));
             return true;
         }
@@ -53,6 +55,10 @@ public class AliasCommandExecutor implements CommandExecutor {
 
         plugin.getDispatcher().dispatch(sender, resolved);
 
+        if (def.sound() != null) {
+            SoundUtil.play(sender, def.sound(), def.soundPitch(), def.soundVolume());
+        }
+
         return true;
     }
 
@@ -64,6 +70,7 @@ public class AliasCommandExecutor implements CommandExecutor {
         if (msg == null || msg.isBlank()) {
             msg = plugin.config().messages().noPermission();
         }
+        SoundUtil.playError(sender);
         sender.sendMessage(CommandDispatcher.colorize(msg));
         return false;
     }
