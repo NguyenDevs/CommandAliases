@@ -40,6 +40,14 @@
 #   permission-message:   Custom message shown when the sender lacks permission.
 #                         Supports & color codes.
 #                         Falls back to the plugin-wide default if omitted.
+#
+#   sound:                Sound to play when the alias is executed.
+#                         Must be a valid Bukkit Sound enum name (e.g. ENTITY_EXPERIENCE_ORB_PICKUP).
+#                         See: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+#
+#   sound-pitch:          Pitch of the sound (0.5 - 2.0, default: 1.0).
+#
+#   sound-volume:         Volume of the sound (default: 1.0).
 # ============================================================================
 
 aliases:
@@ -220,3 +228,11 @@ aliases:
     execute: "firework %executer%"
     permission: commandaliases.firework
     permission-default: op
+
+  # /levelup — example with custom sound
+  levelup:
+    command: levelup
+    execute: "give %executer% diamond 1"
+    sound: ENTITY_PLAYER_LEVELUP
+    sound-pitch: 1.5
+    sound-volume: 1.0
