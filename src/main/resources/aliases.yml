@@ -47,6 +47,13 @@
 #   sound-pitch:          Pitch of the sound (0.5 - 2.0, default: 1.0).
 #
 #   sound-volume:         Volume of the sound (default: 1.0).
+#
+#   cooldown:             Cooldown in seconds before the alias can be used again.
+#                         0 or omitted means no cooldown.
+#
+#   cooldown-message:     Custom message shown when the alias is on cooldown.
+#                         Supports %seconds% placeholder (remaining time).
+#                         Falls back to a default message if omitted.
 # ============================================================================
 
 aliases:
@@ -135,3 +142,26 @@ aliases:
     sound: ENTITY_EXPERIENCE_ORB_PICKUP
     sound-pitch: 1.2
     sound-volume: 0.8
+
+  # =======================
+  #  WITH COOLDOWN
+  # =======================
+
+  # /dailyreward — 60s cooldown per player
+  dailyreward:
+    command: dailyreward
+    execute: "crate reward"
+    cooldown: 60
+    cooldown-message: "&cYou can only claim your reward once per minute. &e(%seconds%s remaining)"
+
+  # /voteparty — 300s cooldown with custom sound
+  voteparty:
+    command: voteparty
+    execute: "crate vote"
+    permission: commandaliases.voteparty
+    permission-default: false
+    cooldown: 300
+    cooldown-message: "&cVote party is on cooldown. &e%seconds% seconds left."
+    sound: ENTITY_PLAYER_LEVELUP
+    sound-pitch: 1.5
+    sound-volume: 1.0
