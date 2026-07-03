@@ -10,5 +10,8 @@ public record AliasDefinition(
     List<String> declaredArgs,
     String permission,
     String permissionMessage,
-    String permissionDefault
+    String permissionDefault,
+    String sound,
+    double soundPitch,
+    double soundVolume
 ) {}
