@@ -13,5 +13,7 @@ public record AliasDefinition(
     String permissionDefault,
     String sound,
     double soundPitch,
-    double soundVolume
+    double soundVolume,
+    int cooldown,
+    String cooldownMessage
 ) {}
