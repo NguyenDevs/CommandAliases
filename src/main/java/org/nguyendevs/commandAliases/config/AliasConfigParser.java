@@ -27,6 +27,8 @@ public class AliasConfigParser {
     private static final String CONFIG_KEY_SOUND_VOLUME = "sound-volume";
     private static final String CONFIG_KEY_COOLDOWN = "cooldown";
     private static final String CONFIG_KEY_COOLDOWN_MESSAGE = "cooldown-message";
+    private static final String CONFIG_KEY_LOOP = "loop";
+    private static final String CONFIG_KEY_LOOP_DELAY = "loop-delay";
     private static final String ALIASES_SECTION = "aliases";
     private static final List<String> VALID_PERMISSION_DEFAULTS = List.of("true", "false", "op");
 
@@ -162,12 +164,25 @@ public class AliasConfigParser {
             cooldownMessage = null;
         }
 
+        var loop = entry.getInt(CONFIG_KEY_LOOP, 0);
+        var loopDelay = entry.getDouble(CONFIG_KEY_LOOP_DELAY, 0.0);
+
+        if (loop < 0) {
+            ConsoleLogger.warn("Alias '" + configKey + "' has negative loop '" + loop + "'. Using 0.");
+            loop = 0;
+        }
+        if (loopDelay < 0) {
+            ConsoleLogger.warn("Alias '" + configKey + "' has negative loop-delay '" + loopDelay + "'. Using 0.");
+            loopDelay = 0;
+        }
+
         return new AliasDefinition(
             configKey, command, execute, commandName,
             Collections.unmodifiableList(declaredArgs),
             permission, permissionMessage, permissionDefault,
             sound, soundPitch, soundVolume,
-            cooldown, cooldownMessage
+            cooldown, cooldownMessage,
+            loop, loopDelay
         );
     }
 }
