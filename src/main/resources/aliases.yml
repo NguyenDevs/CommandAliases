@@ -7,9 +7,8 @@
 # --- Required fields ---
 #   command:  The custom command name (and optional arguments).
 #             Examples:
-#               command: heal           -> /heal (no arguments)
-#               command: "apple <player>"  -> /apple with one argument
-#               command: "giveitem <player> <amount>"  -> /giveitem with two args
+#               command: hello           -> /hello (no arguments)
+#               command: "pay <player>"  -> /pay with one argument
 #
 #   execute:  The real command to dispatch when the alias is used.
 #
@@ -20,14 +19,14 @@
 #                         Declare <name> in command, use %name% in execute.
 #                         Example: command: "giveitem <player> <amount>"
 #                                  execute: "give %player% apple %amount%"
-#                                  -> /giveitem Steve 5 runs  give Steve apple 5
+#                                  -> /giveitem Steve 5  -runs-  give Steve apple 5
 #                         Works with any name: <reason> → %reason%, <item> → %item%, etc.
 #
 #   PluginName:command    (no placeholder, but a special syntax)
 #                         When multiple plugins register the same command name,
 #                         prefix with the plugin name and a colon to target a
 #                         specific plugin's command.
-#                         E.g. execute: "Essentials:heal"
+#                         E.g. execute: "MyPlugin:reward"
 #
 # --- Optional fields ---
 #   permission:           Permission node required to use this alias.
@@ -53,186 +52,86 @@
 aliases:
 
   # =======================
-  #  BASIC — simple /command -> /execute
+  #  BASIC
   # =======================
 
-  # /hub -> /warp hub
-  hub:
-    command: hub
-    execute: "warp hub"
+  # /claimreward -> /crate reward
+  claimreward:
+    command: claimreward
+    execute: "give %executer% apple 1"
 
-  # /discord -> /msg <player> Join our Discord: discord.gg/example
-  discord:
-    command: discord
-    execute: "msg %executer% &bJoin our Discord: &fdiscord.gg/example"
-
-  # /rules -> /text <player> rules.txt
-  rules:
-    command: rules
-    execute: "text %executer% rules.txt"
-
-  # /donate -> /website donate.example.com
-  donate:
-    command: donate
-    execute: "website donate.example.com"
-
-  # /list -> /playerlist
-  list:
-    command: list
-    execute: "playerlist"
+  # /showping -> /ping <player>
+  showping:
+    command: showping
+    execute: "ping %executer%"
 
   # =======================
   #  WITH ARGUMENTS
   # =======================
 
-  # /clearinv <player> -> /clear <player>
-  clearinv:
-    command: "clearinv <player>"
-    execute: "clear %player%"
+  # /tip <player> <amount> -> /eco pay <player> <amount>
+  tip:
+    command: "tip <player> <amount>"
+    execute: "eco pay %player% %amount%"
 
-  # /mute <player> -> /tempmute <player> 30m
-  mute:
-    command: "mute <player>"
-    execute: "tempmute %player% 30m"
-
-  # /warn <player> -> /msg <player> &cYou received a warning from staff.
-  warn:
-    command: "warn <player>"
-    execute: "msg %player% &cYou have been warned by a staff member."
-
-  # /speed <player> <amount> -> /flyspeed <player> <amount>
-  speed:
-    command: "speed <player> <amount>"
-    execute: "flyspeed %player% %amount%"
-
-  # /trade <player> <amount> -> /eco give <player> <amount>
-  trade:
-    command: "trade <player> <amount>"
-    execute: "eco give %player% %amount%"
+  # /report <player> <reason> -> /mail send StaffAlert Report: %player% - %reason%
+  report:
+    command: "report <player> <reason>"
+    execute: "mail send StaffAlert &cReport: &f%player% &8- &f%reason%"
 
   # =======================
   #  WITH PERMISSION
   # =======================
 
-  # /fly — permission-protected toggle
-  fly:
-    command: fly
-    execute: "fly"
-    permission: commandaliases.fly
-    permission-default: false
-    permission-message: "&cYou don't have permission to fly."
-
-  # /fly <player> — make another player fly
-  fly-other:
-    command: "fly <player>"
-    execute: "fly %player%"
-    permission: commandaliases.fly.others
-    permission-default: op
-    permission-message: "&cOnly staff can toggle flight for others."
-
-  # /tp <player> — teleport to another player
-  tp:
-    command: "tp <player>"
-    execute: "tpa %player%"
-    permission: commandaliases.tp
-    permission-default: op
-
-  # /broadcast <message> — staff broadcast
-  broadcast:
-    command: "broadcast <message>"
+  # /broadcastmsg <message> — staff broadcast
+  broadcastmsg:
+    command: "broadcastmsg <message>"
     execute: "say &6[&eBroadcast&6] &f%message%"
     permission: commandaliases.broadcast
     permission-default: op
-    permission-message: "&4Only administrators can broadcast."
+    permission-message: "&cOnly administrators can broadcast."
 
-  # /kick <player> <reason> — staff kick with reason
-  kick:
-    command: "kick <player> <reason>"
-    execute: "kick %player% %reason%"
-    permission: commandaliases.kick
+  # /lockdown — toggle server lockdown (admin only)
+  lockdown:
+    command: lockdown
+    execute: "whitelist toggle"
+    permission: commandaliases.lockdown
     permission-default: op
-    permission-message: "&cYou are not allowed to kick players."
-
-  # /vanish — toggle vanish (staff only)
-  vanish:
-    command: vanish
-    execute: "vanish"
-    permission: commandaliases.vanish
-    permission-default: op
+    permission-message: "&4You don't have permission to toggle lockdown."
 
   # =======================
   #  PLUGIN-QUALIFIED DISPATCH
   # =======================
 
-  # /heal — force Essentials' /heal when multiple plugins register it
-  heal:
-    command: heal
-    execute: "Essentials:heal"
-    permission: commandaliases.heal
-    permission-default: op
-    permission-message: "&cYou cannot heal yourself."
+  # /claimkit — force LoyaltyCrates:kit when Essentials also has /kit
+  claimkit:
+    command: claimkit
+    execute: "LoyaltyCrates:kit"
 
-  # /heal <player> — heal another player via Essentials
-  heal-other:
-    command: "heal <player>"
-    execute: "Essentials:heal %player%"
-    permission: commandaliases.heal.others
-    permission-default: op
-    permission-message: "&cOnly admins can heal others."
-
-  # /god — target CMI's god mode when Essentials also registers /god
-  god:
-    command: god
-    execute: "CMI:god"
-    permission: commandaliases.god
-    permission-default: op
-
-  # /tphere <player> — teleport target to executor via Essentials
-  tphere:
-    command: "tphere <player>"
-    execute: "Essentials:tp %player% %executer%"
-    permission: commandaliases.tphere
-    permission-default: op
+  # /pvptoggle — force CombatPlugin:pvp when another plugin conflicts
+  pvptoggle:
+    command: pvptoggle
+    execute: "CombatPlugin:pvp"
 
   # =======================
-  #  DONATOR / SPECIAL
+  #  WITH CUSTOM SOUND
   # =======================
 
-  # /nick <nick> — change nickname (donator perk)
-  nick:
-    command: "nick <nick>"
-    execute: "nick %executer% %nick%"
-    permission: commandaliases.nick
+  # /redeem — play a sound when used
+  redeem:
+    command: redeem
+    execute: "crate vote"
+    permission: commandaliases.redeem
     permission-default: false
-    permission-message: "&6This is a donator-only feature. &eBuy ranks at &fstore.example.com"
-
-  # /color <color> — set chat color (donator perk)
-  color:
-    command: "color <color>"
-    execute: "chatcolor %executer% %color%"
-    permission: commandaliases.color
-    permission-default: false
-    permission-message: "&6Donators can change their chat color. &ePurchase at &fstore.example.com"
-
-  # /hat — wear an item on your head
-  hat:
-    command: hat
-    execute: "hat"
-    permission: commandaliases.hat
-    permission-default: false
-    permission-message: "&6This is a donator feature."
-
-  # /firework — launch a firework at your location
-  firework:
-    command: firework
-    execute: "firework %executer%"
-    permission: commandaliases.firework
-    permission-default: op
-
-  # /levelup — example with custom sound
-  levelup:
-    command: levelup
-    execute: "give %executer% diamond 1"
+    permission-message: "&6You don't have any votes to redeem."
     sound: ENTITY_PLAYER_LEVELUP
     sound-pitch: 1.5
     sound-volume: 1.0
+
+  # /dailybonus — play a sound on claim
+  dailybonus:
+    command: "dailybonus <code>"
+    execute: "crate key %executer% %code%"
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    sound-pitch: 1.2
+    sound-volume: 0.8
